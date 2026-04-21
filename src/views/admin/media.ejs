@@ -1,0 +1,161 @@
+<% locals.activeNav = 'media' %>
+<div class="page-header">
+  <h1 class="page-title">Libreria Media</h1>
+  <p class="page-sub">Tutte le immagini vengono convertite in WebP con 3 varianti (small, medium, large). Clicca su un file per i dettagli.</p>
+</div>
+
+<div class="admin-card">
+  <h3>Carica nuovi file</h3>
+  <p class="card-sub">Le immagini caricate vengono automaticamente convertite in formato WebP ottimizzato.</p>
+  <form method="POST" action="/admin/media/upload" enctype="multipart/form-data">
+    <div class="upload-zone">
+      <div class="upload-zone-label">Trascina qui i file o clicca per selezionarli</div>
+      <input type="file" name="files" multiple accept="image/*,.pdf,.svg" class="form-input" required style="max-width:400px;margin:0 auto;">
+      <div class="upload-zone-hint" style="margin-top:.5rem">JPG, PNG, SVG, WebP — max 10MB per file. Convertiti automaticamente in WebP.</div>
+    </div>
+    <div style="margin-top:.8rem;">
+      <button type="submit" class="btn-primary">Carica file</button>
+    </div>
+  </form>
+</div>
+
+<% if (media.length) { %>
+<%
+  const categories = {};
+  media.forEach(m => { categories[m.category] = (categories[m.category] || 0) + 1; });
+  const catLabels = { general: 'Generale', hero: 'Hero / Panorama', projects: 'Progetti', bio: 'Biografia / Ritratto', brand: 'Brand / Logo', gallery: 'Galleria' };
+%>
+<div class="admin-card">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem;">
+    <div>
+      <h3 style="margin-bottom:0;">File nella libreria (<%= media.length %>)</h3>
+      <p class="card-sub" style="margin-top:.2rem;">Clicca su un file per aprire il pannello dettagli.</p>
+    </div>
+    <div class="media-filters">
+      <button class="filter-btn active" data-filter="all">Tutti (<%= media.length %>)</button>
+      <% Object.keys(categories).sort().forEach(cat => { %>
+        <button class="filter-btn" data-filter="<%= cat %>"><%= catLabels[cat] || cat %> (<%= categories[cat] %>)</button>
+      <% }); %>
+    </div>
+  </div>
+</div>
+
+<div class="media-grid">
+  <% media.forEach(m => { %>
+  <%
+    var isStatic = !m.filename.match(/^[a-f0-9]{24}/);
+    var src = isStatic ? '/images/' + m.filename : '/uploads/' + m.filename;
+    var sizeStr = m.size ? (m.size / 1024).toFixed(1) + ' KB' : '';
+    var hasVariants = m.variants && m.variants.length > 0;
+  %>
+  <div class="media-item" data-id="<%= m.id %>" data-src="<%= src %>" data-name="<%= m.original_name %>" data-size="<%= sizeStr %>" data-category="<%= m.category %>" data-alt="<%= m.alt_text %>" data-variants='<%= JSON.stringify(m.variants || []) %>'>
+    <% if (m.mime_type && m.mime_type.startsWith('image/')) { %>
+      <img src="<%= src %>" alt="<%= m.alt_text %>" class="media-thumb" loading="lazy">
+    <% } else { %>
+      <div class="media-thumb-placeholder"><%= m.mime_type ? m.mime_type.split('/')[1] : 'FILE' %></div>
+    <% } %>
+    <div class="media-info">
+      <div class="media-name" title="<%= m.original_name %>"><%= m.original_name %></div>
+      <div class="media-meta">
+        <span><%= sizeStr %></span>
+        <span class="media-category"><%= m.category %></span>
+        <% if (hasVariants) { %>
+          <span style="font-size:.55rem;color:var(--gold);font-weight:600;">WEBP &times;3</span>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <% }); %>
+</div>
+<% } else { %>
+<div class="admin-card" style="text-align:center;padding:3rem;color:var(--ink-l);">
+  <p>Nessun file nella libreria.</p>
+</div>
+<% } %>
+
+<!-- SIDE PANEL -->
+<div class="msp-overlay" id="mediaPanelOverlay"></div>
+<div class="media-side-panel" id="mediaSidePanel">
+  <div class="msp-header">
+    <h3>Dettagli file</h3>
+    <button class="msp-close">&times;</button>
+  </div>
+  <div class="msp-image-wrap">
+    <img id="mspImage" src="" alt="">
+  </div>
+  <div class="msp-body">
+    <div class="msp-field">
+      <div class="msp-field-label">Nome file</div>
+      <div class="msp-field-value" id="mspName"></div>
+    </div>
+    <div style="display:flex;gap:1.5rem;">
+      <div class="msp-field" style="flex:1;">
+        <div class="msp-field-label">Dimensione originale</div>
+        <div class="msp-field-value" id="mspSize"></div>
+      </div>
+      <div class="msp-field" style="flex:1;">
+        <div class="msp-field-label">Categoria</div>
+        <div class="msp-field-value" id="mspCategory"></div>
+      </div>
+    </div>
+
+    <!-- VARIANTS -->
+    <div id="mspVariantsSection" style="display:none;margin:1rem 0;">
+      <div class="msp-field-label" style="margin-bottom:.6rem;">Varianti WebP</div>
+      <div id="mspVariants" class="variants-grid"></div>
+    </div>
+
+    <form id="mspFormAction" method="POST" action="">
+      <div class="form-group" style="margin-top:.8rem;">
+        <label class="form-label">Alt text</label>
+        <input type="text" name="alt_text" id="mspAlt" class="form-input" placeholder="Descrizione dell'immagine...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Categoria</label>
+        <select name="category" id="mspCatSelect" class="form-select">
+          <option value="general">Generale</option>
+          <option value="hero">Hero / Panorama</option>
+          <option value="projects">Progetti</option>
+          <option value="bio">Biografia / Ritratto</option>
+          <option value="brand">Brand / Logo</option>
+          <option value="gallery">Galleria</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-primary" style="width:100%;">Salva modifiche</button>
+    </form>
+  </div>
+
+  <div class="msp-actions">
+    <a id="mspOpenLink" href="" target="_blank" class="btn-ghost" style="justify-content:center;">Apri originale</a>
+    <button type="button" id="mspCopyUrl" class="btn-ghost" style="justify-content:center;" data-url="">Copia URL</button>
+    <form id="mspDeleteForm" method="POST" action="" onsubmit="return confirm('Eliminare questo file e tutte le varianti?')">
+      <button type="submit" class="btn-danger" style="width:100%;justify-content:center;">Elimina file</button>
+    </form>
+  </div>
+</div>
+
+<style>
+.media-filters{display:flex;gap:.4rem;flex-wrap:wrap;}
+.filter-btn{font-family:var(--fs, 'Montserrat', sans-serif);font-size:.7rem;padding:.35rem .7rem;border:1px solid var(--border, #e0ddd6);border-radius:4px;background:transparent;color:var(--ink-l, #888);cursor:pointer;transition:all .2s;font-weight:500;}
+.filter-btn:hover{border-color:var(--gold, #b8953e);color:var(--ink, #1a1a18);}
+.filter-btn.active{background:var(--gold, #b8953e);color:#fff;border-color:var(--gold, #b8953e);}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      document.querySelectorAll('.media-item').forEach(item => {
+        if (filter === 'all' || item.dataset.category === filter) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  });
+});
+</script>

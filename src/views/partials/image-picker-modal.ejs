@@ -1,0 +1,20 @@
+<div class="picker-modal" id="imagePickerModal">
+  <div class="picker-modal-content">
+    <div class="picker-modal-header">
+      <h3>Scegli un'immagine dalla libreria</h3>
+      <button class="picker-modal-close" type="button">&times;</button>
+    </div>
+    <div class="picker-modal-grid">
+      <% media.filter(m => m.mime_type && m.mime_type.startsWith('image/')).forEach(m => { %>
+      <%
+        var isStatic = !m.filename.match(/^[a-f0-9]{24}\./);
+        var src = isStatic ? '/images/' + m.filename : '/uploads/' + m.filename;
+      %>
+      <div class="picker-media-item" data-filename="<%= m.filename %>" data-src="<%= src %>">
+        <img src="<%= src %>" alt="<%= m.alt_text || m.original_name %>" loading="lazy">
+        <span><%= m.original_name %></span>
+      </div>
+      <% }); %>
+    </div>
+  </div>
+</div>

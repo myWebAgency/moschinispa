@@ -1,0 +1,63 @@
+<% locals.activeNav = 'fondatore' %>
+<div class="page-header">
+  <h1 class="page-title">Sezione Fondatore</h1>
+  <p class="page-sub">Biografia di Franco Moschini: testi e foto del ritratto.</p>
+</div>
+
+<form method="POST" action="/admin/sezione/fondatore" enctype="multipart/form-data">
+  <div class="admin-card">
+    <h3>Informazioni</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Label sezione</label>
+        <input type="text" name="label" class="form-input" value="<%= data.label || '' %>">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nome</label>
+        <input type="text" name="name" class="form-input" value="<%= data.name || '' %>">
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <h3>Biografia</h3>
+    <p class="card-sub">Ogni campo corrisponde a un paragrafo nella pagina pubblica. Usa gli strumenti per formattare il testo.</p>
+
+    <% for (let i = 1; i <= 5; i++) { %>
+    <div data-richtext>
+      <label class="form-label">Paragrafo <%= i %></label>
+      <textarea name="bio_p<%= i %>" style="display:none;"><%= data['bio_p' + i] || '' %></textarea>
+    </div>
+    <% } %>
+  </div>
+
+  <div class="admin-card">
+    <h3>Foto ritratto</h3>
+    <p class="card-sub">L'immagine che appare a fianco della biografia.</p>
+
+    <div data-image-picker>
+      <% if (fondatoreImg) { %>
+      <div class="picker-preview" style="display:flex;">
+        <img src="/images/<%= fondatoreImg %>" alt="Foto attuale del fondatore">
+        <span class="picker-preview-name"><%= fondatoreImg %></span>
+      </div>
+      <% } %>
+      <div class="picker-buttons">
+        <label class="btn-ghost" style="cursor:pointer;">
+          Carica nuova foto
+          <input type="file" name="fondatore_image" accept="image/*" style="display:none;">
+        </label>
+        <span class="picker-or">oppure</span>
+        <button type="button" class="btn-ghost picker-choose-btn">Scegli dai media</button>
+        <input type="hidden" name="fondatore_media" value="">
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button type="submit" class="btn-primary">Salva sezione Fondatore</button>
+    <a href="/admin" class="btn-ghost">Annulla</a>
+  </div>
+</form>
+
+<%- include('../partials/image-picker-modal', { media: allMedia }) %>

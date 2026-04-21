@@ -1,0 +1,42 @@
+<% locals.activeNav = 'citazioni' %>
+<div class="page-header">
+  <h1 class="page-title">Citazioni</h1>
+  <p class="page-sub">Le due citazioni di Franco Moschini che appaiono nella pagina.</p>
+</div>
+
+<form method="POST" action="/admin/sezione/citazioni">
+  <div class="admin-card">
+    <h3>Prima citazione</h3>
+    <p class="card-sub">Appare dopo la sezione Visione.</p>
+
+    <div data-richtext>
+      <label class="form-label">Testo</label>
+      <textarea name="quote1_text" style="display:none;"><%= q1.text || '' %></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Autore</label>
+      <input type="text" name="quote1_author" class="form-input" value="<%= q1.author || '' %>">
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <h3>Seconda citazione</h3>
+    <p class="card-sub">Appare dopo la sezione Fondatore.</p>
+
+    <div data-richtext>
+      <label class="form-label">Testo</label>
+      <textarea name="quote2_text" style="display:none;"><%= q2.text || '' %></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Autore</label>
+      <input type="text" name="quote2_author" class="form-input" value="<%= q2.author || '' %>">
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button type="submit" class="btn-primary">Salva citazioni</button>
+    <a href="/admin" class="btn-ghost">Annulla</a>
+  </div>
+</form>

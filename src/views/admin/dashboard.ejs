@@ -1,0 +1,191 @@
+<% locals.activeNav = 'dashboard' %>
+
+<!-- Welcome -->
+<div class="dash-welcome">
+  <div>
+    <h1 class="dash-welcome-title">Ciao, <%= user ? user.first_name : '' %></h1>
+    <p class="dash-welcome-sub">Ecco una panoramica del sito Moschini S.p.A.</p>
+  </div>
+  <a href="/" target="_blank" class="btn-ghost">Vedi sito &rarr;</a>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    </div>
+    <div class="stat-info">
+      <div class="stat-val"><%= stats.contents %></div>
+      <div class="stat-label">Contenuti</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    </div>
+    <div class="stat-info">
+      <div class="stat-val"><%= stats.projects %></div>
+      <div class="stat-label">Progetti</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    </div>
+    <div class="stat-info">
+      <div class="stat-val"><%= stats.media %></div>
+      <div class="stat-label">Media</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    </div>
+    <div class="stat-info">
+      <div class="stat-val"><%= stats.users %></div>
+      <div class="stat-label">Utenti</div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts row -->
+<div class="dash-grid-2">
+  <div class="admin-card">
+    <h3>Media per categoria</h3>
+    <p class="card-sub">Distribuzione dei file nella libreria media.</p>
+    <div style="position:relative;height:220px;">
+      <canvas id="chartMediaCats"></canvas>
+    </div>
+  </div>
+  <div class="admin-card">
+    <h3>Spazio di archiviazione</h3>
+    <p class="card-sub">Peso totale dei file originali e delle varianti WebP.</p>
+    <div style="position:relative;height:220px;">
+      <canvas id="chartStorage"></canvas>
+    </div>
+    <div style="display:flex;gap:1.5rem;margin-top:1rem;">
+      <div>
+        <div style="font-size:.68rem;color:var(--ink-l);text-transform:uppercase;letter-spacing:.08em;">Originali</div>
+        <div style="font-size:1.1rem;font-weight:500;color:var(--ink);"><%= (stats.totalMediaSize / 1048576).toFixed(2) %> MB</div>
+      </div>
+      <div>
+        <div style="font-size:.68rem;color:var(--ink-l);text-transform:uppercase;letter-spacing:.08em;">Varianti WebP</div>
+        <div style="font-size:1.1rem;font-weight:500;color:var(--gold);"><%= (stats.totalVariantSize / 1048576).toFixed(2) %> MB</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Projects + recent media -->
+<div class="dash-grid-2">
+  <div class="admin-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;">
+      <h3 style="margin-bottom:0;">Progetti</h3>
+      <% if (can('projects:view')) { %><a href="/admin/projects" style="font-size:.72rem;color:var(--gold);text-decoration:none;">Vedi tutti &rarr;</a><% } %>
+    </div>
+    <% if (stats.projectsList.length) { %>
+    <div class="dash-project-list">
+      <% stats.projectsList.forEach(p => { %>
+      <div class="dash-project-item">
+        <% if (p.image) { %>
+        <img src="/uploads/<%= p.image.replace(/\.\w+$/, '-small.webp') %>" alt="" class="dash-project-thumb" onerror="this.src='/images/<%= p.image %>'">
+        <% } else { %>
+        <div class="dash-project-thumb-empty"></div>
+        <% } %>
+        <div class="dash-project-info">
+          <div class="dash-project-title"><%= p.title %></div>
+          <div class="dash-project-meta"><%= p.year_label %></div>
+        </div>
+        <span class="dash-project-badge <%= p.visible ? 'active' : 'inactive' %>"><%= p.visible ? 'Attivo' : 'Nascosto' %></span>
+      </div>
+      <% }); %>
+    </div>
+    <% } else { %>
+    <p style="color:var(--ink-l);font-size:.84rem;">Nessun progetto.</p>
+    <% } %>
+  </div>
+  <div class="admin-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;">
+      <h3 style="margin-bottom:0;">Media recenti</h3>
+      <% if (can('media:view')) { %><a href="/admin/media" style="font-size:.72rem;color:var(--gold);text-decoration:none;">Vedi tutti &rarr;</a><% } %>
+    </div>
+    <div class="dash-media-grid">
+      <% stats.recentMedia.forEach(m => { %>
+      <% var isStatic = !m.filename.match(/^[a-f0-9]{24}/); var src = isStatic ? '/images/' + m.filename : '/uploads/' + m.filename; %>
+      <div class="dash-media-item">
+        <% if (m.mime_type && m.mime_type.startsWith('image/')) { %>
+          <img src="<%= src %>" alt="" loading="lazy">
+        <% } else { %>
+          <div class="dash-media-placeholder"><%= m.mime_type ? m.mime_type.split('/')[1] : '' %></div>
+        <% } %>
+      </div>
+      <% }); %>
+    </div>
+  </div>
+</div>
+
+<!-- Quick actions -->
+<div class="admin-card">
+  <h3>Azioni rapide</h3>
+  <div class="quick-grid">
+    <% if (can('contents:view')) { %>
+    <a href="/admin/sezione/hero" class="quick-card">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <div><div class="quick-label">Hero</div><div class="quick-desc">Titolo, sottotitolo, immagine</div></div>
+    </a>
+    <a href="/admin/sezione/fondatore" class="quick-card">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div><div class="quick-label">Fondatore</div><div class="quick-desc">Biografia e foto</div></div>
+    </a>
+    <% } %>
+    <% if (can('projects:view')) { %>
+    <a href="/admin/projects" class="quick-card">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <div><div class="quick-label">Progetti</div><div class="quick-desc">Gestisci iniziative</div></div>
+    </a>
+    <% } %>
+    <% if (can('media:view')) { %>
+    <a href="/admin/media" class="quick-card">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <div><div class="quick-label">Media</div><div class="quick-desc">Carica e gestisci file</div></div>
+    </a>
+    <% } %>
+    <% if (can('seo:view')) { %>
+    <a href="/admin/seo" class="quick-card">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06"/></svg>
+      <div><div class="quick-label">SEO & Analytics</div><div class="quick-desc">Meta tag, GA4, Search Console</div></div>
+    </a>
+    <% } %>
+  </div>
+</div>
+
+<script>
+(function(){
+  var gold = '#E8B00B';
+  var colors = ['#E8B00B','#3b82f6','#a855f7','#10b981','#f97316','#ef4444','#6366f1'];
+
+  // Media by category
+  var catData = <%- JSON.stringify(stats.mediaCats) %>;
+  var catLabels = Object.keys(catData);
+  var catValues = Object.values(catData);
+  if(document.getElementById('chartMediaCats') && catLabels.length){
+    new Chart(document.getElementById('chartMediaCats'), {
+      type:'doughnut',
+      data:{ labels:catLabels.map(function(l){return l.charAt(0).toUpperCase()+l.slice(1);}), datasets:[{ data:catValues, backgroundColor:colors.slice(0,catLabels.length), borderWidth:0, hoverOffset:6 }] },
+      options:{ responsive:true, maintainAspectRatio:false, cutout:'65%', plugins:{ legend:{ position:'right', labels:{ boxWidth:12, padding:14, font:{family:"'Montserrat'",size:12} } } } }
+    });
+  }
+
+  // Storage
+  var origMB = <%= (stats.totalMediaSize / 1048576).toFixed(3) %>;
+  var varMB = <%= (stats.totalVariantSize / 1048576).toFixed(3) %>;
+  if(document.getElementById('chartStorage')){
+    new Chart(document.getElementById('chartStorage'), {
+      type:'bar',
+      data:{ labels:['Originali','Varianti WebP'], datasets:[{ data:[origMB,varMB], backgroundColor:['rgba(26,25,22,.12)',gold], borderRadius:4, barThickness:40 }] },
+      options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:function(c){return c.raw.toFixed(2)+' MB';} } } }, scales:{ x:{grid:{display:false},ticks:{callback:function(v){return v+' MB';},font:{family:"'Montserrat'",size:11}}}, y:{grid:{display:false},ticks:{font:{family:"'Montserrat'",size:12}}} } }
+    });
+  }
+})();
+</script>

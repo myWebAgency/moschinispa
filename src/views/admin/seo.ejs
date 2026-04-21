@@ -1,0 +1,94 @@
+<% locals.activeNav = 'seo' %>
+<div class="page-header">
+  <h1 class="page-title">SEO, Analytics & Search Console</h1>
+  <p class="page-sub">Configura meta tag, Open Graph, Google Analytics 4 e Google Search Console.</p>
+</div>
+
+<form method="POST" action="/admin/seo">
+  <!-- META TAG -->
+  <div class="admin-card">
+    <h3>Meta Tag</h3>
+    <p class="card-sub">Titolo e descrizione che appaiono nei risultati di ricerca Google.</p>
+
+    <div class="form-group">
+      <label class="form-label">Titolo pagina (title tag)</label>
+      <input type="text" name="title" class="form-input" value="<%= (contents.seo && contents.seo.title) || '' %>">
+      <p class="form-hint">Consigliato: 50-60 caratteri. Appare nella tab del browser e su Google.</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Meta description</label>
+      <textarea name="description" class="form-textarea" rows="2"><%= (contents.seo && contents.seo.description) || '' %></textarea>
+      <p class="form-hint">Consigliata: 150-160 caratteri. Appare sotto il titolo nei risultati Google.</p>
+    </div>
+  </div>
+
+  <!-- OPEN GRAPH -->
+  <div class="admin-card">
+    <h3>Open Graph (social sharing)</h3>
+    <p class="card-sub">Come appare il link quando condiviso su Facebook, LinkedIn, WhatsApp ecc.</p>
+
+    <div class="form-group">
+      <label class="form-label">OG Title</label>
+      <input type="text" name="og_title" class="form-input" value="<%= (contents.seo && contents.seo.og_title) || '' %>">
+    </div>
+    <div class="form-group">
+      <label class="form-label">OG Description</label>
+      <textarea name="og_description" class="form-textarea" rows="2"><%= (contents.seo && contents.seo.og_description) || '' %></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">URL del sito</label>
+        <input type="text" name="site_url" class="form-input" value="<%= seo.site_url || '' %>" placeholder="https://moschinispa.it">
+      </div>
+      <div class="form-group">
+        <label class="form-label">OG Type</label>
+        <input type="text" name="og_type" class="form-input" value="<%= seo.og_type || 'website' %>">
+      </div>
+    </div>
+  </div>
+
+  <!-- GA4 -->
+  <div class="admin-card">
+    <h3>Google Analytics 4</h3>
+    <p class="card-sub">Inserisci l'ID di misurazione GA4 per tracciare il traffico del sito.</p>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Measurement ID (GA4)</label>
+        <input type="text" name="ga_id" class="form-input" value="<%= seo.ga_id || '' %>" placeholder="G-XXXXXXXXXX">
+        <p class="form-hint">Lo trovi in Google Analytics &gt; Amministrazione &gt; Stream di dati &gt; ID misurazione.</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Theme color</label>
+        <input type="text" name="theme_color" class="form-input" value="<%= seo.theme_color || '#fafaf8' %>">
+        <p class="form-hint">Colore della barra del browser su mobile.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH CONSOLE -->
+  <div class="admin-card">
+    <h3>Google Search Console</h3>
+    <p class="card-sub">Per verificare il sito su Google Search Console e monitorare l'indicizzazione.</p>
+
+    <div class="form-group">
+      <label class="form-label">Codice di verifica</label>
+      <input type="text" name="gsc_verification" class="form-input" value="<%= seo.gsc_verification || '' %>" placeholder="google-site-verification=XXXXX">
+      <p class="form-hint">Incolla qui il contenuto del meta tag di verifica fornito da Google Search Console. Viene inserito automaticamente nell'head della pagina.</p>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button type="submit" class="btn-primary">Salva tutte le impostazioni</button>
+    <a href="/admin" class="btn-ghost">Annulla</a>
+  </div>
+</form>
+
+<div class="admin-card" style="margin-top:1rem;">
+  <h3>File generati automaticamente</h3>
+  <p class="card-sub">Questi file vengono generati dinamicamente dal server per i motori di ricerca.</p>
+  <div style="display:flex;gap:.8rem;">
+    <a href="/sitemap.xml" target="_blank" class="btn-ghost">sitemap.xml &rarr;</a>
+    <a href="/robots.txt" target="_blank" class="btn-ghost">robots.txt &rarr;</a>
+  </div>
+</div>

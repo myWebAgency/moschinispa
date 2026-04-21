@@ -1,0 +1,98 @@
+<% locals.activeNav = 'users' %>
+<div class="page-header">
+  <div class="page-header-row">
+    <div>
+      <h1 class="page-title">Utenti & Permessi</h1>
+      <p class="page-sub">Gestisci chi può accedere al pannello, con quale ruolo e cosa può fare.</p>
+    </div>
+    <a href="/admin/users/new" class="btn-primary">+ Nuovo utente</a>
+  </div>
+</div>
+
+<!-- UTENTI -->
+<div class="admin-card">
+  <h3>Utenti registrati</h3>
+  <p class="card-sub">Ogni utente ha un ruolo che determina le sezioni a cui può accedere.</p>
+  <table class="admin-table">
+    <thead><tr><th>Nome</th><th>Cognome</th><th>Email</th><th>Ruolo</th><th>Creato il</th><th></th></tr></thead>
+    <tbody>
+      <% users.forEach(u => { %>
+      <tr>
+        <td style="font-weight:500;color:var(--ink);"><%= u.first_name %></td>
+        <td style="font-weight:500;color:var(--ink);"><%= u.last_name %></td>
+        <td><%= u.email %></td>
+        <td><span class="role-badge role-<%= u.role %>"><%= u.role.replace(/_/g, ' ') %></span></td>
+        <td><%= u.created_at || '' %></td>
+        <td class="cell-actions">
+          <a href="/admin/users/<%= u.id %>/edit" class="btn-ghost btn-sm">Modifica</a>
+          <% if (u.id !== user.id) { %>
+          <form method="POST" action="/admin/users/<%= u.id %>/delete" class="inline-form" onsubmit="return confirm('Eliminare questo utente?')">
+            <button type="submit" class="btn-danger btn-sm">Elimina</button>
+          </form>
+          <% } %>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<!-- RUOLI -->
+<div class="page-header" style="margin-top:2.5rem;">
+  <div class="page-header-row">
+    <div>
+      <h1 class="page-title" style="font-size:1.8rem;">Ruoli & Permessi</h1>
+      <p class="page-sub">Crea, modifica o elimina i ruoli. Ogni ruolo definisce i permessi di accesso.</p>
+    </div>
+    <a href="/admin/roles/new" class="btn-primary">+ Nuovo ruolo</a>
+  </div>
+</div>
+
+<div class="admin-card">
+  <table class="admin-table">
+    <thead><tr><th>Ruolo</th><th>Nome interno</th><th>Permessi</th><th></th></tr></thead>
+    <tbody>
+      <% roles.forEach(r => { %>
+      <tr>
+        <td style="font-weight:500;color:var(--ink);"><span class="role-badge role-<%= r.name %>"><%= r.label %></span></td>
+        <td><code style="font-size:.78rem;background:var(--bg);padding:2px 6px;border-radius:2px;"><%= r.name %></code></td>
+        <td>
+          <% const perms = r.permissions ? r.permissions.split(',').filter(Boolean) : []; %>
+          <% if (perms.length === 0) { %>
+            <span style="color:var(--ink-xl);">Nessun permesso</span>
+          <% } else { %>
+            <% perms.forEach(p => { %>
+              <span style="display:inline-block;padding:2px 7px;margin:1px 2px;font-size:.62rem;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--ink-m);"><%= p %></span>
+            <% }); %>
+          <% } %>
+        </td>
+        <td class="cell-actions">
+          <a href="/admin/roles/<%= r.id %>/edit" class="btn-ghost btn-sm">Modifica</a>
+          <% if (r.name !== 'admin') { %>
+          <form method="POST" action="/admin/roles/<%= r.id %>/delete" class="inline-form" onsubmit="return confirm('Eliminare questo ruolo? Gli utenti con questo ruolo perderanno l\\'accesso.')">
+            <button type="submit" class="btn-danger btn-sm">Elimina</button>
+          </form>
+          <% } %>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<div class="admin-card">
+  <h3>Legenda permessi</h3>
+  <p class="card-sub">Ogni permesso controlla l'accesso a una sezione specifica del pannello.</p>
+  <table class="admin-table" style="margin-bottom:0;">
+    <thead><tr><th>Permesso</th><th>Sezione</th><th>Descrizione</th></tr></thead>
+    <tbody>
+      <% allPermissions.forEach(p => { %>
+      <tr>
+        <td><code style="font-size:.78rem;background:var(--bg);padding:2px 6px;border-radius:2px;"><%= p.key %></code></td>
+        <td style="font-weight:500;"><%= p.label %></td>
+        <td><%= p.desc %></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>

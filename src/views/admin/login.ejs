@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Moschini S.p.A.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--gold:#E8B00B;--bg:#fafaf8;--ink:#1a1916;--ink-m:#504e4b;--ink-l:#97938e;--fd:'Cormorant Garamond',serif;--fs:'Montserrat',sans-serif}
+    body{background:var(--bg);font-family:var(--fs);display:flex;align-items:center;justify-content:center;min-height:100vh}
+    .login-card{width:380px;padding:3rem;background:#fff;border:1px solid rgba(0,0,0,.06);text-align:center}
+    .login-logo{font-family:var(--fd);font-size:1.6rem;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);margin-bottom:.4rem}
+    .login-sub{font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:2.2rem;font-weight:600}
+    .fg{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1.2rem;text-align:left}
+    .fg label{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-l);font-weight:500}
+    .fg input{border:1px solid rgba(0,0,0,.08);padding:.7rem .9rem;font-family:var(--fs);font-size:.9rem;font-weight:300;color:var(--ink);outline:none;transition:border-color .2s;background:var(--bg)}
+    .fg input:focus{border-color:var(--gold)}
+    .btn{width:100%;padding:.8rem;background:var(--gold);color:#fff;font-family:var(--fs);font-size:.6rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;border:none;cursor:pointer;transition:background .2s;margin-top:.5rem}
+    .btn:hover{background:#d4a00a}
+    .flash{padding:.6rem 1rem;margin-bottom:1.2rem;font-size:.8rem;border-radius:2px}
+    .flash-error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+    .flash-success{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+  </style>
+</head>
+<body>
+  <form class="login-card" method="POST" action="/admin/login">
+    <div class="login-logo">Moschini</div>
+    <div class="login-sub">Area Amministrazione</div>
+    <% if (typeof flash !== 'undefined') { %>
+      <% if (flash.error && flash.error.length) { %><div class="flash flash-error"><%= flash.error[0] %></div><% } %>
+      <% if (flash.success && flash.success.length) { %><div class="flash flash-success"><%= flash.success[0] %></div><% } %>
+    <% } %>
+    <div class="fg">
+      <label for="email">Email</label>
+      <input type="email" name="email" id="email" required autocomplete="email">
+    </div>
+    <div class="fg">
+      <label for="password">Password</label>
+      <input type="password" name="password" id="password" required autocomplete="current-password">
+    </div>
+    <button type="submit" class="btn">Accedi</button>
+  </form>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= (contents.seo && contents.seo.title) || 'Moschini S.p.A.' %></title>
+<meta name="description" content="<%= (contents.seo && contents.seo.description) || '' %>">
+<meta property="og:title" content="<%= (contents.seo && contents.seo.og_title) || '' %>">
+<meta property="og:description" content="<%= (contents.seo && contents.seo.og_description) || '' %>">
+<meta property="og:type" content="<%= seo.og_type || 'website' %>">
+<meta name="theme-color" content="<%= seo.theme_color || '#fafaf8' %>">
+<link rel="canonical" href="<%= seo.site_url || '' %>">
+<% if (seo.gsc_verification) { %><meta name="google-site-verification" content="<%= seo.gsc_verification %>"><% } %>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"<%= seo.site_url || 'https://moschini.it' %>/#organization","name":"Moschini S.p.A.","foundingDate":"2002","founder":{"@type":"Person","name":"Franco Moschini"}},{"@type":"Person","@id":"<%= seo.site_url || 'https://moschini.it' %>/#franco-moschini","name":"Franco Moschini","birthDate":"1934-06-10","birthPlace":"Macerata","award":["Cavaliere del Lavoro","Compasso d'Oro alla carriera","Laurea honoris causa - Università di Macerata"]}]}
+</script>
+
+<link rel="stylesheet" href="/css/site.css">
+
+<% if (seo.ga_id && seo.ga_id !== 'G-XXXXXXXXXX') { %>
+<script async src="https://www.googletagmanager.com/gtag/js?id=<%= seo.ga_id %>"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','<%= seo.ga_id %>');</script>
+<% } %>
+</head>
+<body>
+<%- body %>
+<script src="/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<%
+  const c = contents;
+  const hero = c.hero || {};
+  const visione = c.visione || {};
+  const q1 = c.quote1 || {};
+  const fond = c.fondatore || {};
+  const q2 = c.quote2 || {};
+  const proj = c.projects || {};
+  const ft = c.footer || {};
+  const w = webp || {};
+
+  /**
+   * pic(filename, alt, cls, sizes, extra)
+   * sizes: tells the browser the actual rendered width so it picks the right variant
+   *   - 'full'  = full-width (panorama)  → large on desktop, medium on tablet, small on mobile
+   *   - 'half'  = ~50% width (fondatore) → medium on desktop, small on mobile
+   *   - 'card'  = small card (~280px)    → small always, medium only on retina
+   */
+  function pic(filename, alt, cls, sizes, extra) {
+    const v = w[filename];
+    cls = cls || '';
+    extra = extra || '';
+    sizes = sizes || 'full';
+
+    var sizesAttr;
+    if (sizes === 'card') {
+      sizesAttr = '(max-width:768px) 90vw, 280px';
+    } else if (sizes === 'half') {
+      sizesAttr = '(max-width:768px) 90vw, 45vw';
+    } else {
+      sizesAttr = '100vw';
+    }
+
+    if (v && v.small && v.medium && v.large) {
+      return '<picture>' +
+        '<source type="image/webp" srcset="' + v.small + ' ' + v.small_w + 'w, ' + v.medium + ' ' + v.medium_w + 'w, ' + v.large + ' ' + v.large_w + 'w" sizes="' + sizesAttr + '">' +
+        '<img src="' + v.small + '" alt="' + alt + '" class="' + cls + '" loading="lazy" decoding="async" ' + extra + '>' +
+        '</picture>';
+    }
+    return '<img src="/images/' + filename + '" alt="' + alt + '" class="' + cls + '" loading="lazy" decoding="async" ' + extra + '>';
+  }
+%>
+
+<!-- Custom cursor -->
+<div class="cur" id="cur"></div>
+<div class="cur-ring" id="curRing"></div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a class="nl" href="/" aria-label="Moschini S.p.A. — Homepage" onclick="event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})">
+      <img src="/images/logo-moschini.svg" alt="Moschini S.p.A." loading="lazy" decoding="async">
+    </a>
+    <ul class="nav-links">
+      <% menuItems.forEach((item, i) => { %>
+        <li><a href="<%= item.href %>" <% if (i === 0) { %>class="act"<% } %>><%= item.label %></a></li>
+      <% }); %>
+    </ul>
+    <button class="nm-btn" aria-label="Menu" id="menuToggle"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mmenu" id="mmenu">
+  <button class="mmenu-close" id="mmenuClose">&times;</button>
+  <% menuItems.forEach(item => { %>
+    <a href="<%= item.href %>"><%= item.label %></a>
+  <% }); %>
+</div>
+
+<!-- HOME -->
+<div id="page-home">
+
+  <!-- HERO -->
+  <section class="hero" id="home-top">
+    <div class="hero-rule"></div>
+    <div class="hero-cnt">
+      <div class="hero-inner">
+        <div class="hero-ey">
+          <span><%= hero.eyebrow || '' %></span>
+        </div>
+        <h1 class="hero-ttl"><%- hero.title || '' %></h1>
+        <p class="hero-sub"><%= hero.subtitle || '' %></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panorama — WebP responsive -->
+  <div id="home-panorama">
+    <%- pic('paesaggio-moschini.jpg', 'Paesaggio marchigiano', '', 'full', 'style="width:100%;height:100%;display:block;object-fit:cover;object-position:center center;"') %>
+  </div>
+
+  <!-- VISIONE -->
+  <section class="sec" id="home-visione">
+    <div class="sec-w" style="max-width:920px;">
+      <div class="lbl rv"><span><%= visione.label || '' %></span></div>
+      <h2 class="disp rv" style="text-align:center;margin-bottom:.9rem;"><%= visione.title || '' %></h2>
+      <p class="body rv d1" style="text-align:center;max-width:860px;margin:0 auto 2rem;"><%- visione.body || '' %></p>
+    </div>
+  </section>
+
+  <!-- QUOTE 1 -->
+  <div class="qsec">
+    <div class="qi">
+      <blockquote class="qt rv"><%- q1.text || '' %></blockquote>
+      <div class="qa rv d1"><span><%= q1.author || '' %></span></div>
+    </div>
+  </div>
+
+  <!-- FONDATORE -->
+  <section class="sec" id="home-fondatore" style="padding-top:5.75rem;">
+    <div class="bio-g">
+      <div class="bio-body rv">
+        <div class="lbl lbl-left"><span><%= fond.label || '' %></span></div>
+        <h2 class="fondatore-name"><%= fond.name || '' %></h2>
+        <% ['bio_p1','bio_p2','bio_p3','bio_p4','bio_p5'].forEach(k => { %>
+          <% if (fond[k]) { %><p><%- fond[k] %></p><% } %>
+        <% }); %>
+      </div>
+      <div class="bio-sb rv d1">
+        <%- pic('franco-moschini.jpg', 'Franco Moschini', 'bio-port lightbox-trigger', 'half') %>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE 2 -->
+  <div class="qsec">
+    <div class="qi">
+      <blockquote class="qt rv"><%- q2.text || '' %></blockquote>
+      <div class="qa rv d1"><span><%= q2.author || '' %></span></div>
+    </div>
+  </div>
+
+  <!-- PROGETTI -->
+  <section class="sec" id="home-progetti">
+    <div class="sec-w">
+      <div class="lbl rv"><span><%= proj.label || '' %></span></div>
+      <h2 class="disp rv" style="text-align:center;margin-bottom:.8rem;"><%- proj.title || '' %></h2>
+      <p class="body rv d1" style="text-align:center;max-width:760px;margin:0 auto 2.8rem;"><%= proj.subtitle || '' %></p>
+      <div class="tsproj rv">
+        <% projects.forEach(p => { %>
+        <div class="tsp">
+          <% if (p.image) { %>
+          <div class="tsp-ic tsp-photo" aria-hidden="true">
+            <%- pic(p.image, p.title, 'lightbox-trigger', 'card') %>
+          </div>
+          <% } %>
+          <div class="tsp-b"><%= p.badge %></div>
+          <div class="tsp-ttl"><%= p.title %></div>
+          <div class="tsp-copy">
+            <% p.description.split('\n\n').forEach(para => { %>
+              <p class="tsp-txt"><%= para %></p>
+            <% }); %>
+          </div>
+          <div class="tsp-yr"><%= p.year_label %></div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer id="site-footer">
+  <div class="f-grid">
+    <div>
+      <img src="/images/logo-moschini.svg" alt="Moschini S.p.A." loading="lazy" decoding="async" style="height:22px;width:auto;display:block;margin-bottom:0.6rem;">
+      <p class="f-desc"><%= ft.description || '' %></p>
+      <div class="f-contact">
+        <a href="mailto:<%= ft.email || '' %>"><%= ft.email || '' %></a>
+        <a href="tel:<%= (ft.phone || '').replace(/\s/g, '') %>"><%= ft.phone || '' %></a>
+      </div>
+    </div>
+    <% if (footerItems.nav) { %>
+    <div class="f-col nav-col">
+      <h4>Navigazione</h4>
+      <ul>
+        <% footerItems.nav.forEach(item => { %>
+          <li><% if (item.type === 'link' && item.href) { %><button onclick="scrollToSection('<%= item.href.replace('#','') %>')"><%= item.label %></button><% } else { %><span><%= item.label %></span><% } %></li>
+        <% }); %>
+      </ul>
+    </div>
+    <% } %>
+    <% if (footerItems.initiatives) { %>
+    <div class="f-col init-col">
+      <h4>Iniziative</h4>
+      <ul>
+        <% footerItems.initiatives.forEach(item => { %>
+          <li><% if (item.type === 'link' && item.href) { %><a href="<%= item.href %>" target="_blank" rel="noopener noreferrer"><%= item.label %></a><% } else { %><span><%= item.label %></span><% } %></li>
+        <% }); %>
+      </ul>
+    </div>
+    <% } %>
+  </div>
+  <div class="f-bot">
+    <span class="f-legal"><%= ft.copyright || '' %></span>
+  </div>
+</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="imgLightbox" aria-hidden="true">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" type="button" aria-label="Chiudi immagine">&times;</button>
+    <img class="lightbox-img" src="" alt="">
+  </div>
+</div>

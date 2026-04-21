@@ -1,0 +1,118 @@
+<% locals.activeNav = 'users' %>
+<div class="page-header">
+  <h1 class="page-title"><%= editRole ? 'Modifica ruolo' : 'Nuovo ruolo' %></h1>
+  <p class="page-sub"><a href="/admin/users" style="color:var(--gold);text-decoration:none;">&larr; Torna a Utenti & Permessi</a></p>
+</div>
+
+<div class="admin-card">
+  <form method="POST" action="/admin/roles">
+    <% if (editRole) { %><input type="hidden" name="id" value="<%= editRole.id %>"><% } %>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Nome interno</label>
+        <input type="text" name="name" class="form-input" value="<%= editRole ? editRole.name : '' %>" required pattern="[a-z_]+" <%= editRole && editRole.name === 'admin' ? 'readonly' : '' %>>
+        <p class="form-hint">Solo lettere minuscole e underscore (es. "social_manager").</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nome visualizzato</label>
+        <input type="text" name="label" class="form-input" value="<%= editRole ? editRole.label : '' %>" required>
+        <p class="form-hint">Il nome che appare nel pannello (es. "Social Manager").</p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Permessi</label>
+      <p class="form-hint" style="margin-bottom:.8rem;">Personalizza i permessi per ogni sezione. La Dashboard è sempre accessibile.</p>
+
+      <%
+        const currentPerms = editRole && editRole.permissions ? editRole.permissions.split(',') : [];
+      %>
+
+      <table class="perm-table">
+        <thead>
+          <tr>
+            <th style="text-align:left;">Sezione</th>
+            <% permActions.forEach(act => { %>
+              <th style="text-align:center;"><%= act.label %></th>
+            <% }); %>
+            <th style="text-align:center;">Tutti</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% permSections.forEach(section => { %>
+          <tr class="perm-row" data-section="<%= section.key %>" onclick="toggleRowClick(event, '<%= section.key %>')">
+            <td>
+              <div style="font-weight:500;"><%= section.label %></div>
+              <div style="font-size:.6rem;color:var(--ink-l);margin-top:1px;"><%= section.desc %></div>
+            </td>
+            <% permActions.forEach(act => {
+              const permKey = section.key + ':' + act.action;
+              const isChecked = currentPerms.includes(permKey);
+            %>
+              <td style="text-align:center;">
+                <label class="perm-check">
+                  <input type="checkbox" name="permissions" value="<%= permKey %>" <%= isChecked ? 'checked' : '' %> data-section="<%= section.key %>">
+                </label>
+              </td>
+            <% }); %>
+            <td style="text-align:center;">
+              <label class="perm-check">
+                <input type="checkbox" class="select-all-row" data-section="<%= section.key %>" onchange="toggleRow(this)">
+              </label>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="btn-row">
+      <button type="submit" class="btn-primary"><%= editRole ? 'Aggiorna ruolo' : 'Crea ruolo' %></button>
+      <a href="/admin/users" class="btn-ghost">Annulla</a>
+    </div>
+  </form>
+</div>
+
+<style>
+.perm-table{width:100%;border-collapse:collapse;margin-top:.5rem;}
+.perm-table th{padding:.5rem .6rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-l);border-bottom:1px solid var(--border);font-weight:500;}
+.perm-table td{padding:.6rem;border-bottom:1px solid var(--border-light, #f0ede8);}
+.perm-table tbody tr:hover{background:rgba(0,0,0,.015);cursor:pointer;}
+.perm-check{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;}
+.perm-check input[type="checkbox"]{width:18px;height:18px;accent-color:var(--gold, #b8953e);cursor:pointer;}
+</style>
+
+<script>
+function toggleRow(masterCb) {
+  const section = masterCb.dataset.section;
+  const cbs = document.querySelectorAll('input[data-section="' + section + '"][name="permissions"]');
+  cbs.forEach(cb => { cb.checked = masterCb.checked; });
+}
+
+function toggleRowClick(event, section) {
+  // Don't toggle if clicking directly on a checkbox
+  if (event.target.type === 'checkbox') return;
+  const cbs = document.querySelectorAll('input[data-section="' + section + '"][name="permissions"]');
+  const allChecked = [...cbs].every(cb => cb.checked);
+  cbs.forEach(cb => { cb.checked = !allChecked; });
+  const master = document.querySelector('.select-all-row[data-section="' + section + '"]');
+  if (master) master.checked = !allChecked;
+}
+
+// Init "select all" checkboxes on load
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.select-all-row').forEach(master => {
+    const section = master.dataset.section;
+    const cbs = document.querySelectorAll('input[data-section="' + section + '"][name="permissions"]');
+    const allChecked = [...cbs].every(cb => cb.checked);
+    master.checked = allChecked && cbs.length > 0;
+    // Update master when individual checkboxes change
+    cbs.forEach(cb => {
+      cb.addEventListener('change', () => {
+        master.checked = [...cbs].every(c => c.checked);
+      });
+    });
+  });
+});
+</script>

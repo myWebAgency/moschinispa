@@ -1,0 +1,58 @@
+<% locals.activeNav = 'hero' %>
+<div class="page-header">
+  <h1 class="page-title">Sezione Hero</h1>
+  <p class="page-sub">Il primo impatto visivo del sito: titolo, sottotitolo e immagine panoramica.</p>
+</div>
+
+<form method="POST" action="/admin/sezione/hero" enctype="multipart/form-data">
+  <div class="admin-card">
+    <h3>Testi Hero</h3>
+    <p class="card-sub">L'eyebrow, il titolo grande e il sottotitolo che appaiono al centro della pagina.</p>
+
+    <div class="form-group">
+      <label class="form-label">Eyebrow</label>
+      <input type="text" name="eyebrow" class="form-input" value="<%= data.eyebrow || '' %>">
+      <p class="form-hint">Testo piccolo dorato sopra il titolo (es. "Imprenditoria · Design · Territorio")</p>
+    </div>
+
+    <div data-richtext>
+      <label class="form-label">Titolo</label>
+      <textarea name="title" style="display:none;"><%= data.title || '' %></textarea>
+    </div>
+
+    <div data-richtext>
+      <label class="form-label">Sottotitolo</label>
+      <textarea name="subtitle" style="display:none;"><%= data.subtitle || '' %></textarea>
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <h3>Immagine panoramica</h3>
+    <p class="card-sub">La foto full-width che appare sotto l'hero. Consigliata: almeno 1920px di larghezza.</p>
+
+    <div data-image-picker>
+      <% if (panoramaImg) { %>
+      <div class="picker-preview" style="display:flex;">
+        <img src="/images/<%= panoramaImg %>" alt="Panorama attuale">
+        <span class="picker-preview-name"><%= panoramaImg %></span>
+      </div>
+      <% } %>
+      <div class="picker-buttons">
+        <label class="btn-ghost" style="cursor:pointer;">
+          Carica nuova immagine
+          <input type="file" name="panorama_image" accept="image/*" style="display:none;">
+        </label>
+        <span class="picker-or">oppure</span>
+        <button type="button" class="btn-ghost picker-choose-btn">Scegli dai media</button>
+        <input type="hidden" name="panorama_media" value="">
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button type="submit" class="btn-primary">Salva sezione Hero</button>
+    <a href="/admin" class="btn-ghost">Annulla</a>
+  </div>
+</form>
+
+<%- include('../partials/image-picker-modal', { media: allMedia }) %>

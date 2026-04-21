@@ -1,0 +1,64 @@
+<% locals.activeNav = 'projects' %>
+<div class="page-header">
+  <div class="page-header-row">
+    <div>
+      <h1 class="page-title">Progetti & Iniziative</h1>
+      <p class="page-sub">Gestisci le iniziative e i progetti visualizzati nella sezione dedicata.</p>
+    </div>
+    <a href="/admin/projects/new" class="btn-primary">+ Nuovo progetto</a>
+  </div>
+</div>
+
+<!-- Section header editing -->
+<div class="admin-card">
+  <h3>Intestazione sezione</h3>
+  <p class="card-sub">Label, titolo e sottotitolo che appaiono sopra la griglia dei progetti.</p>
+  <form method="POST" action="/admin/projects/section">
+    <div class="form-group">
+      <label class="form-label">Label</label>
+      <input type="text" name="label" class="form-input" value="<%= projSection.label || '' %>">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Titolo</label>
+      <input type="text" name="title" class="form-input" value="<%= projSection.title || '' %>">
+      <p class="form-hint">HTML consentito: usa &lt;em&gt; per testo dorato.</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Sottotitolo</label>
+      <textarea name="subtitle" class="form-textarea" rows="2"><%= projSection.subtitle || '' %></textarea>
+    </div>
+    <button type="submit" class="btn-primary btn-sm">Salva intestazione</button>
+  </form>
+</div>
+
+<!-- Projects list -->
+<div class="admin-card">
+  <h3>Progetti (<%= projects.length %>)</h3>
+  <table class="admin-table">
+    <thead><tr><th>Ord.</th><th>Immagine</th><th>Titolo</th><th>Badge</th><th>Anno</th><th>Vis.</th><th></th></tr></thead>
+    <tbody>
+      <% projects.forEach(p => { %>
+      <tr>
+        <td><%= p.sort_order %></td>
+        <td>
+          <% if (p.image) { %>
+            <img src="/images/<%= p.image %>" style="width:50px;height:35px;object-fit:cover;border-radius:2px;border:1px solid var(--border);">
+          <% } else { %>
+            <span style="color:var(--ink-l);font-size:.6rem;">—</span>
+          <% } %>
+        </td>
+        <td style="font-weight:400;color:var(--ink);"><%= p.title %></td>
+        <td style="font-size:.65rem;"><%= p.badge %></td>
+        <td style="font-size:.65rem;color:var(--gold);"><%= p.year_label %></td>
+        <td><%= p.visible ? 'Si' : 'No' %></td>
+        <td class="cell-actions">
+          <a href="/admin/projects/<%= p.id %>/edit" class="btn-ghost btn-sm">Modifica</a>
+          <form method="POST" action="/admin/projects/<%= p.id %>/delete" class="inline-form" onsubmit="return confirm('Eliminare?')">
+            <button type="submit" class="btn-danger btn-sm">Elimina</button>
+          </form>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>

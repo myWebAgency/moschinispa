@@ -1,0 +1,81 @@
+<% locals.activeNav = 'projects' %>
+<div class="page-header">
+  <h1 class="page-title"><%= project ? 'Modifica progetto' : 'Nuovo progetto' %></h1>
+  <p class="page-sub"><a href="/admin/projects" style="color:var(--gold);text-decoration:none;">&larr; Torna ai progetti</a></p>
+</div>
+
+<form method="POST" action="/admin/projects" enctype="multipart/form-data">
+  <% if (project) { %><input type="hidden" name="id" value="<%= project.id %>"><% } %>
+
+  <div class="admin-card">
+    <h3>Informazioni progetto</h3>
+
+    <div class="form-group">
+      <label class="form-label">Titolo</label>
+      <input type="text" name="title" class="form-input" value="<%= project ? project.title : '' %>" required>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Badge / Categoria</label>
+      <input type="text" name="badge" class="form-input" value="<%= project ? project.badge : '' %>">
+      <p class="form-hint">Es. "Fondazione · Ente del Terzo Settore"</p>
+    </div>
+
+    <div data-richtext>
+      <label class="form-label">Descrizione</label>
+      <textarea name="description" style="display:none;"><%= project ? project.description : '' %></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Anno / Luogo</label>
+        <input type="text" name="year_label" class="form-input" value="<%= project ? project.year_label : '' %>" placeholder="es. 2024 · Tolentino">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Ordine</label>
+          <input type="number" name="sort_order" class="form-input" value="<%= project ? project.sort_order : 0 %>">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Visibile</label>
+          <select name="visible" class="form-select">
+            <option value="1" <%= project && project.visible ? 'selected' : '' %>>Si</option>
+            <option value="0" <%= project && !project.visible ? 'selected' : '' %>>No</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <h3>Immagine progetto</h3>
+
+    <div data-image-picker>
+      <% if (project && project.image) { %>
+      <div class="picker-preview" style="display:flex;">
+        <img src="/images/<%= project.image %>" alt="<%= project.title %>">
+        <span class="picker-preview-name"><%= project.image %></span>
+      </div>
+      <input type="hidden" name="image" value="<%= project.image %>">
+      <% } else { %>
+      <div class="picker-preview"></div>
+      <input type="hidden" name="image" value="">
+      <% } %>
+      <div class="picker-buttons">
+        <label class="btn-ghost" style="cursor:pointer;">
+          Carica nuova immagine
+          <input type="file" name="project_image" accept="image/*" style="display:none;">
+        </label>
+        <span class="picker-or">oppure</span>
+        <button type="button" class="btn-ghost picker-choose-btn">Scegli dai media</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button type="submit" class="btn-primary"><%= project ? 'Aggiorna progetto' : 'Crea progetto' %></button>
+    <a href="/admin/projects" class="btn-ghost">Annulla</a>
+  </div>
+</form>
+
+<%- include('../partials/image-picker-modal', { media: allMedia || media }) %>

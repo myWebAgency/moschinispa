@@ -1,0 +1,47 @@
+<% locals.activeNav = 'users' %>
+<div class="page-header">
+  <h1 class="page-title"><%= editUser ? 'Modifica utente' : 'Nuovo utente' %></h1>
+  <p class="page-sub"><a href="/admin/users" style="color:var(--gold);text-decoration:none;">&larr; Torna a Utenti & Permessi</a></p>
+</div>
+
+<div class="admin-card">
+  <form method="POST" action="/admin/users">
+    <% if (editUser) { %><input type="hidden" name="id" value="<%= editUser.id %>"><% } %>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Nome</label>
+        <input type="text" name="first_name" class="form-input" value="<%= editUser ? editUser.first_name : '' %>" required placeholder="es. Marco">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cognome</label>
+        <input type="text" name="last_name" class="form-input" value="<%= editUser ? editUser.last_name : '' %>" required placeholder="es. Rossi">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" name="email" class="form-input" value="<%= editUser ? editUser.email : '' %>" required>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Password<%= editUser ? ' (lascia vuoto per non modificare)' : '' %></label>
+      <input type="password" name="password" class="form-input" <%= editUser ? '' : 'required' %> minlength="6">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Ruolo</label>
+      <select name="role" class="form-select">
+        <% roles.forEach(r => { %>
+          <option value="<%= r.name %>" <%= editUser && editUser.role === r.name ? 'selected' : '' %>><%= r.label %></option>
+        <% }); %>
+      </select>
+      <p class="form-hint">Il ruolo determina quali sezioni del pannello l'utente può vedere e modificare.</p>
+    </div>
+
+    <div class="btn-row">
+      <button type="submit" class="btn-primary"><%= editUser ? 'Aggiorna utente' : 'Crea utente' %></button>
+      <a href="/admin/users" class="btn-ghost">Annulla</a>
+    </div>
+  </form>
+</div>

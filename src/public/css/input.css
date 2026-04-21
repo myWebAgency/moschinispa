@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Admin-specific Tailwind layer */
+@layer components {
+  .admin-btn {
+    @apply inline-flex items-center gap-2 px-4 py-2 text-xs font-medium tracking-widest uppercase transition-all duration-200;
+  }
+  .admin-btn-primary {
+    @apply admin-btn bg-gold text-white hover:bg-yellow-600;
+  }
+  .admin-btn-ghost {
+    @apply admin-btn border border-gray-200 text-ink-m hover:border-gold hover:text-gold;
+  }
+  .admin-input {
+    @apply w-full px-3 py-2 border border-gray-200 rounded text-sm font-light text-ink focus:border-gold focus:ring-1 focus:ring-gold/20 outline-none transition-colors bg-white;
+  }
+  .admin-label {
+    @apply block text-xs font-medium tracking-wider uppercase text-ink-l mb-1;
+  }
+  .admin-card {
+    @apply bg-white border border-gray-100 rounded-lg p-6;
+  }
+}

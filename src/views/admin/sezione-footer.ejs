@@ -1,0 +1,95 @@
+<% locals.activeNav = 'footer-edit' %>
+<div class="page-header">
+  <h1 class="page-title">Footer</h1>
+  <p class="page-sub">Testi del footer e voci delle colonne navigazione/iniziative.</p>
+</div>
+
+<form method="POST" action="/admin/footer">
+  <div class="admin-card">
+    <h3>Informazioni generali</h3>
+
+    <div class="form-group">
+      <label class="form-label">Descrizione</label>
+      <textarea name="description" class="form-textarea" rows="2"><%= ft.description || '' %></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-input" value="<%= ft.email || '' %>">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Telefono</label>
+        <input type="text" name="phone" class="form-input" value="<%= ft.phone || '' %>">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Copyright</label>
+      <input type="text" name="copyright" class="form-input" value="<%= ft.copyright || '' %>">
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button type="submit" class="btn-primary">Salva footer</button>
+    <a href="/admin" class="btn-ghost">Annulla</a>
+  </div>
+</form>
+
+<div class="card-separator" style="margin:2rem 0"></div>
+
+<!-- Footer columns managed separately below -->
+<div class="page-header" style="margin-top:1.5rem">
+  <h1 class="page-title" style="font-size:1.6rem">Voci del footer</h1>
+  <p class="page-sub">Gestisci le voci delle colonne Navigazione e Iniziative.</p>
+</div>
+
+<div class="admin-card">
+  <h3>Aggiungi voce</h3>
+  <form method="POST" action="/admin/footer/items" style="display:flex;gap:.8rem;align-items:end;flex-wrap:wrap;">
+    <div class="form-group" style="width:130px;margin-bottom:0;">
+      <label class="form-label">Colonna</label>
+      <select name="column_name" class="form-select">
+        <option value="nav">Navigazione</option>
+        <option value="initiatives">Iniziative</option>
+      </select>
+    </div>
+    <div class="form-group" style="flex:1;min-width:140px;margin-bottom:0;">
+      <label class="form-label">Label</label>
+      <input type="text" name="label" class="form-input" required>
+    </div>
+    <div class="form-group" style="flex:1;min-width:140px;margin-bottom:0;">
+      <label class="form-label">Link</label>
+      <input type="text" name="href" class="form-input" placeholder="">
+    </div>
+    <div class="form-group" style="width:90px;margin-bottom:0;">
+      <label class="form-label">Tipo</label>
+      <select name="type" class="form-select"><option value="link">Link</option><option value="text">Testo</option></select>
+    </div>
+    <div class="form-group" style="width:60px;margin-bottom:0;">
+      <label class="form-label">Ordine</label>
+      <input type="number" name="sort_order" class="form-input" value="0">
+    </div>
+    <button type="submit" class="btn-primary" style="margin-bottom:0;">Aggiungi</button>
+  </form>
+</div>
+
+<div class="admin-card">
+  <table class="admin-table">
+    <thead><tr><th>Col.</th><th>Label</th><th>Link</th><th>Tipo</th><th>Ord.</th><th></th></tr></thead>
+    <tbody>
+      <% items.forEach(item => { %>
+      <tr>
+        <form method="POST" action="/admin/footer/items">
+          <input type="hidden" name="id" value="<%= item.id %>"><input type="hidden" name="visible" value="1">
+          <td><select name="column_name" class="form-select" style="padding:.3rem;font-size:.68rem;"><option value="nav" <%= item.column_name==='nav'?'selected':'' %>>Nav</option><option value="initiatives" <%= item.column_name==='initiatives'?'selected':'' %>>Iniziative</option></select></td>
+          <td><input type="text" name="label" class="form-input" value="<%= item.label %>" style="padding:.3rem .5rem;font-size:.72rem;"></td>
+          <td><input type="text" name="href" class="form-input" value="<%= item.href %>" style="padding:.3rem .5rem;font-size:.72rem;"></td>
+          <td><select name="type" class="form-select" style="padding:.3rem;font-size:.68rem;"><option value="link" <%= item.type==='link'?'selected':'' %>>Link</option><option value="text" <%= item.type==='text'?'selected':'' %>>Testo</option></select></td>
+          <td><input type="number" name="sort_order" class="form-input" value="<%= item.sort_order %>" style="width:50px;padding:.3rem .4rem;font-size:.72rem;"></td>
+          <td class="cell-actions"><button type="submit" class="btn-ghost btn-sm">Salva</button></form><form method="POST" action="/admin/footer/<%= item.id %>/delete" class="inline-form" onsubmit="return confirm('Eliminare?')"><button type="submit" class="btn-danger btn-sm">Elimina</button></form></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>

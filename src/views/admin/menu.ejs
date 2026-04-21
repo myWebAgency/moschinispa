@@ -1,0 +1,50 @@
+<% locals.activeNav = 'menu' %>
+<div class="page-header">
+  <h1 class="page-title">Navigazione</h1>
+  <p class="page-sub">Gestisci le voci del menu header del sito.</p>
+</div>
+
+<div class="admin-card">
+  <h3>Aggiungi voce al menu</h3>
+  <form method="POST" action="/admin/menu" style="display:flex;gap:.8rem;align-items:end;flex-wrap:wrap;">
+    <div class="form-group" style="flex:1;min-width:140px;margin-bottom:0;">
+      <label class="form-label">Label</label>
+      <input type="text" name="label" class="form-input" required placeholder="es. Chi siamo">
+    </div>
+    <div class="form-group" style="flex:1;min-width:140px;margin-bottom:0;">
+      <label class="form-label">Link (href)</label>
+      <input type="text" name="href" class="form-input" placeholder="#sezione-id">
+    </div>
+    <div class="form-group" style="width:70px;margin-bottom:0;">
+      <label class="form-label">Ordine</label>
+      <input type="number" name="sort_order" class="form-input" value="0">
+    </div>
+    <button type="submit" class="btn-primary" style="margin-bottom:0;">Aggiungi</button>
+  </form>
+</div>
+
+<div class="admin-card">
+  <h3>Voci attuali</h3>
+  <table class="admin-table">
+    <thead><tr><th>Ord.</th><th>Label</th><th>Link</th><th>Visibile</th><th></th></tr></thead>
+    <tbody>
+      <% items.forEach(item => { %>
+      <tr>
+        <form method="POST" action="/admin/menu">
+          <input type="hidden" name="id" value="<%= item.id %>">
+          <td><input type="number" name="sort_order" class="form-input" value="<%= item.sort_order %>" style="width:55px;padding:.3rem .4rem;font-size:.72rem;"></td>
+          <td><input type="text" name="label" class="form-input" value="<%= item.label %>" style="padding:.3rem .5rem;font-size:.72rem;"></td>
+          <td><input type="text" name="href" class="form-input" value="<%= item.href %>" style="padding:.3rem .5rem;font-size:.72rem;"></td>
+          <td><select name="visible" class="form-select" style="padding:.3rem;font-size:.68rem;"><option value="1" <%= item.visible ? 'selected' : '' %>>Si</option><option value="0" <%= !item.visible ? 'selected' : '' %>>No</option></select></td>
+          <td class="cell-actions">
+            <button type="submit" class="btn-ghost btn-sm">Salva</button>
+        </form>
+            <form method="POST" action="/admin/menu/<%= item.id %>/delete" class="inline-form" onsubmit="return confirm('Eliminare?')">
+              <button type="submit" class="btn-danger btn-sm">Elimina</button>
+            </form>
+          </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
