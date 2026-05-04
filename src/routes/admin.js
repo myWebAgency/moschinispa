@@ -205,6 +205,17 @@ router.get('/footer', hasPermission('footer:view'), (req, res) => {
   });
 });
 
+router.post('/footer/builtby', hasPermission('footer:create'), upload.single('built_by_logo'), (req, res) => {
+  const { built_by_url } = req.body;
+  if (req.file) {
+    const logoPath = '/uploads/' + req.file.filename;
+    Content.upsert('footer', 'built_by_logo', logoPath, 'text', 'Built by - logo');
+  }
+  Content.upsert('footer', 'built_by_url', built_by_url || '', 'text', 'Built by - link URL');
+  req.flash('success', 'Built by aggiornato.');
+  res.redirect('/admin/footer');
+});
+
 router.post('/footer', hasPermission('footer:create'), (req, res) => {
   const { description, email, phone, copyright } = req.body;
   Content.upsert('footer', 'description', description, 'text', 'Descrizione footer');
@@ -231,7 +242,7 @@ router.get('/projects/new', hasPermission('projects:create'), (req, res) => {
 });
 
 router.post('/projects', hasPermission('projects:create'), upload.single('project_image'), (req, res) => {
-  const { badge, title, description, image, year_label, sort_order, visible } = req.body;
+  const { badge, title, description, image, year_label, link_url, sort_order, visible } = req.body;
   let imageName = image || '';
 
   // Handle file upload for project image
@@ -252,10 +263,10 @@ router.post('/projects', hasPermission('projects:create'), upload.single('projec
   }
 
   if (req.body.id) {
-    Project.update(req.body.id, { badge, title, description, image: imageName, year_label, sort_order: parseInt(sort_order) || 0, visible: visible === 'on' || visible === '1' });
+    Project.update(req.body.id, { badge, title, description, image: imageName, year_label, link_url, sort_order: parseInt(sort_order) || 0, visible: visible === 'on' || visible === '1' });
     req.flash('success', 'Progetto aggiornato.');
   } else {
-    Project.create({ badge, title, description, image: imageName, year_label, sort_order: parseInt(sort_order) || 0 });
+    Project.create({ badge, title, description, image: imageName, year_label, link_url, sort_order: parseInt(sort_order) || 0 });
     req.flash('success', 'Progetto creato.');
   }
   res.redirect('/admin/projects');

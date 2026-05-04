@@ -123,3 +123,38 @@ document.querySelectorAll('.lightbox-trigger').forEach(el => {
 lightboxClose?.addEventListener('click', closeLightbox);
 lightbox?.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+
+
+/* === Scroll-spy menu attivo === */
+(function () {
+  const sections = Array.from(document.querySelectorAll('section[id]'));
+  const links = Array.from(document.querySelectorAll('.nav-links a[href^="#"], .mmenu a[href^="#"]'));
+  if (!sections.length || !links.length) return;
+
+  function setActive(targetHref) {
+    links.forEach(a => a.classList.toggle('act', a.getAttribute('href') === targetHref));
+  }
+
+  let tick = false;
+  function update() {
+    const navOffset = 100;
+    let currentId = sections[0].id;
+    for (const sec of sections) {
+      if (sec.getBoundingClientRect().top - navOffset <= 0) currentId = sec.id;
+    }
+    setActive('#' + currentId);
+  }
+  window.addEventListener('scroll', () => {
+    if (tick) return; tick = true;
+    requestAnimationFrame(() => { update(); tick = false; });
+  }, { passive: true });
+
+  // Snappier: update active immediately on click
+  links.forEach(a => a.addEventListener('click', () => {
+    const href = a.getAttribute('href');
+    if (href && href.startsWith('#')) setActive(href);
+  }));
+
+  update();
+})();

@@ -45,6 +45,11 @@
         </div>
       </div>
     </div>
+    <div class="form-group">
+      <label class="form-label">Link al sito (opzionale)</label>
+      <input type="url" name="link_url" class="form-input" value="<%= project ? (project.link_url || '') : '' %>" placeholder="https://esempio.com">
+      <p class="form-hint">Se compilato, sotto la card del progetto comparira "Visita il sito" che porta a questo URL.</p>
+    </div>
   </div>
 
   <div class="admin-card">
