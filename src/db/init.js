@@ -65,6 +65,7 @@ async function initDatabase() {
       description TEXT NOT NULL DEFAULT '',
       image TEXT DEFAULT '',
       year_label TEXT DEFAULT '',
+      link_url TEXT DEFAULT '',
       sort_order INTEGER DEFAULT 0,
       visible INTEGER DEFAULT 1,
       updated_at DATETIME DEFAULT (datetime('now'))
@@ -98,6 +99,17 @@ async function initDatabase() {
       updated_at DATETIME DEFAULT (datetime('now'))
     );
   `);
+
+  // === Migrations for existing DBs (idempotent) ===
+  try {
+    const projectCols = db.all('PRAGMA table_info(projects)');
+    if (!projectCols.some(c => c.name === 'link_url')) {
+      db.exec("ALTER TABLE projects ADD COLUMN link_url TEXT DEFAULT ''");
+      console.log('Migration: added link_url to projects');
+    }
+  } catch (e) {
+    console.error('Migration error:', e);
+  }
 
   console.log('Database tables created.');
 }

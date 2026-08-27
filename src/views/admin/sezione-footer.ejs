@@ -36,6 +36,32 @@
   </div>
 </form>
 
+<div class="admin-card">
+  <h3>Built by (footer in basso a destra)</h3>
+  <p style="color:var(--ink-l);font-size:.8rem;margin-bottom:1rem;">Logo dell'agenzia mostrato nel footer in basso a destra, accanto al testo "Built by". Il logo è cliccabile e apre il link che imposti.</p>
+  <form method="POST" action="/admin/footer/builtby" enctype="multipart/form-data">
+    <% if (ft.built_by_logo) { %>
+    <div class="form-group">
+      <label class="form-label">Logo attuale</label>
+      <div style="background:#f4f4ee;padding:.6rem;display:inline-block;border-radius:4px;">
+        <img src="<%= ft.built_by_logo %>" alt="logo corrente" style="height:24px;display:block;">
+      </div>
+    </div>
+    <% } %>
+    <div class="form-group">
+      <label class="form-label">Nuovo logo (PNG/SVG/WebP — lascia vuoto per non cambiare)</label>
+      <input type="file" name="built_by_logo" class="form-input" accept="image/png,image/jpeg,image/svg+xml,image/webp">
+    </div>
+    <div class="form-group">
+      <label class="form-label">URL del link (a chi punta il logo)</label>
+      <input type="url" name="built_by_url" class="form-input" value="<%= ft.built_by_url || '' %>" placeholder="https://mywebagency.com">
+    </div>
+    <div class="btn-row">
+      <button type="submit" class="btn-primary">Salva Built by</button>
+    </div>
+  </form>
+</div>
+
 <div class="card-separator" style="margin:2rem 0"></div>
 
 <!-- Footer columns managed separately below -->

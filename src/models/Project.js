@@ -14,13 +14,13 @@ const Project = {
   },
 
   create(data) {
-    return db.run('INSERT INTO projects (badge, title, description, image, year_label, sort_order) VALUES (?, ?, ?, ?, ?, ?)',
-      [data.badge, data.title, data.description, data.image || '', data.year_label || '', data.sort_order || 0]);
+    return db.run('INSERT INTO projects (badge, title, description, image, year_label, link_url, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [data.badge, data.title, data.description, data.image || '', data.year_label || '', data.link_url || '', data.sort_order || 0]);
   },
 
   update(id, data) {
-    return db.run('UPDATE projects SET badge = ?, title = ?, description = ?, image = ?, year_label = ?, sort_order = ?, visible = ?, updated_at = datetime("now") WHERE id = ?',
-      [data.badge, data.title, data.description, data.image || '', data.year_label || '', data.sort_order || 0, data.visible ? 1 : 0, id]);
+    return db.run('UPDATE projects SET badge = ?, title = ?, description = ?, image = ?, year_label = ?, link_url = ?, sort_order = ?, visible = ?, updated_at = datetime("now") WHERE id = ?',
+      [data.badge, data.title, data.description, data.image || '', data.year_label || '', data.link_url || '', data.sort_order || 0, data.visible ? 1 : 0, id]);
   },
 
   delete(id) {

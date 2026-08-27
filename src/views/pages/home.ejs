@@ -53,7 +53,7 @@
     </a>
     <ul class="nav-links">
       <% menuItems.forEach((item, i) => { %>
-        <li><a href="<%= item.href %>" <% if (i === 0) { %>class="act"<% } %>><%= item.label %></a></li>
+        <li><a href="<%= item.href %>"><%= item.label %></a></li>
       <% }); %>
     </ul>
     <button class="nm-btn" aria-label="Menu" id="menuToggle"><span></span><span></span><span></span></button>
@@ -148,10 +148,18 @@
           <div class="tsp-b"><%= p.badge %></div>
           <div class="tsp-ttl"><%= p.title %></div>
           <div class="tsp-copy">
-            <% p.description.split('\n\n').forEach(para => { %>
-              <p class="tsp-txt"><%= para %></p>
-            <% }); %>
+            <% const _desc = (p.description || '').replace(/(<p>\s*(<br\s*\/?>)?\s*<\/p>\s*)+$/gi, ''); %>
+            <% if (/<\w+/.test(_desc)) { %>
+              <%- _desc %>
+            <% } else { %>
+              <% _desc.split('\n\n').forEach(para => { %>
+                <p class="tsp-txt"><%= para %></p>
+              <% }); %>
+            <% } %>
           </div>
+          <% if (p.link_url) { %>
+            <a class="tsp-link" href="<%= p.link_url %>" target="_blank" rel="noopener noreferrer">Visita il sito &rarr;</a>
+          <% } %>
           <div class="tsp-yr"><%= p.year_label %></div>
         </div>
         <% }); %>
@@ -172,6 +180,16 @@
         <a href="tel:<%= (ft.phone || '').replace(/\s/g, '') %>"><%= ft.phone || '' %></a>
       </div>
     </div>
+    <% if (footerItems.compliance) { %>
+    <div class="f-col comp-col">
+      <h4>Compliance</h4>
+      <ul>
+        <% footerItems.compliance.forEach(item => { %>
+          <li><% if (item.type === 'link' && item.href) { %><a href="<%= item.href %>" target="_blank" rel="noopener noreferrer"><%= item.label %></a><% } else { %><span><%= item.label %></span><% } %></li>
+        <% }); %>
+      </ul>
+    </div>
+    <% } %>
     <% if (footerItems.nav) { %>
     <div class="f-col nav-col">
       <h4>Navigazione</h4>
@@ -195,6 +213,12 @@
   </div>
   <div class="f-bot">
     <span class="f-legal"><%= ft.copyright || '' %></span>
+    <% if (ft.built_by_logo) { %>
+      <a class="f-builtby" href="<%= ft.built_by_url || '#' %>" target="_blank" rel="noopener noreferrer">
+        <span>Built by</span>
+        <img src="<%= ft.built_by_logo %>" alt="" loading="lazy" decoding="async">
+      </a>
+    <% } %>
   </div>
 </footer>
 
