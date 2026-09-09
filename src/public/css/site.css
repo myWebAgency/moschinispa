@@ -148,13 +148,16 @@ nav.sc{background:rgba(250,250,248,.97);border-bottom-color:var(--bdr)}
 .tsp-ttl{font-family:var(--fd);font-size:clamp(1.2rem,1.9vw,1.55rem);font-weight:400;color:var(--ink);line-height:1.28;margin-bottom:.9rem}
 .tsp-copy{display:flex;flex-direction:column;gap:.85rem;flex-grow:1}
 .tsp-txt,.tsp-copy p{font-family:var(--fs);font-size:.86rem;font-weight:300;color:var(--ink-m);line-height:1.9;text-align:left;margin:0}
-/* year_label + link: sempre allineati in fondo alla card, indipendentemente
-   dalla presenza del link. .tsp-copy con flex-grow:1 spinge questi due elementi
-   in basso; il placeholder .tsp-link-hidden riserva lo spazio del link quando manca */
-.tsp-yr{margin-top:1.4rem;padding-top:0;font-family:var(--fs);font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:600}
+/* Fondo card: pulsante SOPRA la scritta anno+luogo. Entrambi sempre alla
+   stessa altezza tra le card, indipendentemente da:
+   - lunghezza della descrizione (.tsp-copy ha flex-grow:1 e spinge in basso)
+   - presenza del link (placeholder .tsp-link-hidden riserva lo spazio)
+   - lunghezza di year_label (min-height=2 righe: la 1a riga resta allineata,
+     la 2a scende SOTTO nello spazio riservato invece di far salire tutto). */
 .tsp-link{align-self:flex-start;margin-top:.9rem;margin-bottom:0;display:inline-flex;align-items:center;gap:.45rem;padding:.55rem 1.1rem;font-family:var(--fs);font-size:.7rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid var(--gold);text-decoration:none;transition:background .25s,color .25s}
 .tsp-link:hover{background:var(--gold);color:#fff}
 .tsp-link-hidden{visibility:hidden;pointer-events:none;user-select:none}
+.tsp-yr{margin-top:1rem;padding-top:0;font-family:var(--fs);font-size:.74rem;line-height:1.4;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:600;min-height:2.8em;display:block}
 
 /* ── LIGHTBOX ────────────────────────────────────── */
 .lightbox{position:fixed;inset:0;background:rgba(20,18,16,.84);display:flex;align-items:center;justify-content:center;padding:4vh 4vw;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility .22s ease;z-index:9999}

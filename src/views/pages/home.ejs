@@ -157,12 +157,12 @@
               <% }); %>
             <% } %>
           </div>
-          <div class="tsp-yr"><%= p.year_label %></div>
           <% if (p.link_url) { %>
             <a class="tsp-link" href="<%= p.link_url %>" target="_blank" rel="noopener noreferrer">Visita il sito &rarr;</a>
           <% } else { %>
             <span class="tsp-link tsp-link-hidden" aria-hidden="true">Visita il sito &rarr;</span>
           <% } %>
+          <div class="tsp-yr"><%= p.year_label %></div>
         </div>
         <% }); %>
       </div>
